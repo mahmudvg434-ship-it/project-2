@@ -1,29 +1,68 @@
 import streamlit as st
-import pandas as pd
 
-st.title("問い合わせ管理アプリ")
+# -----------------------------
+# App Title
+# -----------------------------
+st.title("総務問い合わせ入力アプリ")
+st.write("社員からの問い合わせを入力してください。")
 
-if "data" not in st.session_state:
-    st.session_state.data = []
+# -----------------------------
+# Session State (history রাখার জন্য)
+# -----------------------------
+if "history" not in st.session_state:
+    st.session_state.history = []
 
-with st.form("form"):
+# -----------------------------
+# Form Start
+# -----------------------------
+with st.form("inquiry_form"):
+
     name = st.text_input("氏名")
-    question = st.text_area("問い合わせ内容")
     category = st.selectbox("カテゴリ", ["休暇", "給与", "福利厚生", "その他"])
-    submitted = st.form_submit_button("送信")
+    priority = st.radio("緊急度", ["高", "中", "低"])
+    question = st.text_area("問い合わせ内容", height=160)
 
+    submitted = st.form_submit_button("送信する")
+
+# -----------------------------
+# When Submit Button Clicked
+# -----------------------------
 if submitted:
+
+    # validation
     if question.strip() == "":
-        st.error("内容を入力してください")
+        st.error("問い合わせ内容を入力してください。")
+
     else:
-        st.success("登録しました")
-        st.session_state.data.append({
-            "名前": name,
+        st.success("問い合わせを受け付けました。")
+
+        # show result
+        st.subheader("入力内容")
+        st.write("👤 氏名:", name)
+        st.write("📂 カテゴリ:", category)
+        st.write("⚡ 緊急度:", priority)
+        st.write("📝 内容:", question)
+
+        # save to history
+        st.session_state.history.append({
+            "氏名": name,
             "カテゴリ": category,
+            "緊急度": priority,
             "内容": question
         })
 
-if st.session_state.data:
-    df = pd.DataFrame(st.session_state.data)
-    st.subheader("問い合わせ履歴")
-    st.dataframe(df)
+# -----------------------------
+# History Section
+# -----------------------------
+st.divider()
+st.subheader("📋 問い合わせ履歴")
+
+if len(st.session_state.history) == 0:
+    st.info("まだ履歴はありません。")
+else:
+    for i, item in enumerate(st.session_state.history, start=1):
+        st.write(f"--- 問い合わせ {i} ---")
+        st.write("👤", item["氏名"])
+        st.write("📂", item["カテゴリ"])
+        st.write("⚡", item["緊急度"])
+        st.write("📝", item["内容"])
