@@ -1,19 +1,19 @@
 import streamlit as st
 
 # -----------------------------
-# App Title
+# Title
 # -----------------------------
 st.title("総務問い合わせ入力アプリ")
 st.write("社員からの問い合わせを入力してください。")
 
 # -----------------------------
-# Session State (history রাখার জন্য)
+# Session State (history store)
 # -----------------------------
 if "history" not in st.session_state:
     st.session_state.history = []
 
 # -----------------------------
-# Form Start
+# Form
 # -----------------------------
 with st.form("inquiry_form"):
 
@@ -25,25 +25,23 @@ with st.form("inquiry_form"):
     submitted = st.form_submit_button("送信する")
 
 # -----------------------------
-# When Submit Button Clicked
+# Submit Action
 # -----------------------------
 if submitted:
 
-    # validation
     if question.strip() == "":
         st.error("問い合わせ内容を入力してください。")
 
     else:
         st.success("問い合わせを受け付けました。")
 
-        # show result
         st.subheader("入力内容")
         st.write("👤 氏名:", name)
         st.write("📂 カテゴリ:", category)
         st.write("⚡ 緊急度:", priority)
         st.write("📝 内容:", question)
 
-        # save to history
+        # save history
         st.session_state.history.append({
             "氏名": name,
             "カテゴリ": category,
